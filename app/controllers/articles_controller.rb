@@ -5,15 +5,15 @@ class ArticlesController < ApplicationController
     def index
         @articles = Article.all
     end
-    
+
     def show
         # binding.pry
     end
-    
+
     def new
         @article = Article.new
     end
-    
+
     def create
         @article = Article.new(article_params)
         if @article.save
@@ -23,10 +23,10 @@ class ArticlesController < ApplicationController
             render :new
         end
     end
-    
+
     def edit
     end
-    
+
     def update
         if @article.update(article_params)
             redirect_to article_path(@article), notice: '更新できたよ！'
@@ -35,18 +35,18 @@ class ArticlesController < ApplicationController
             render :edit
         end
     end
-    
+
     def destroy
         article = Article.find(params[:id])
         article.destroy!
         redirect_to root_path, notice: '削除に成功しました'
     end
-    
+
     private
     def article_params
         params.require(:article).permit(:title, :content)
     end
-    
+
     def set_article
         @article = Article.find(params[:id])
     end
