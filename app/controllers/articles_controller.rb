@@ -5,8 +5,9 @@ class ArticlesController < ApplicationController
     def index
         @articles = Article.all
     end
-
+    
     def show
+        # binding.pry
     end
     
     def new
