@@ -9,6 +9,7 @@ class ArticlesController < ApplicationController
 
     def show
         # binding.pry
+        @comments = @article.comments
     end
 
     def new
