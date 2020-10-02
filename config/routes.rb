@@ -4,9 +4,11 @@ Rails.application.routes.draw do
   root to: 'articles#index'
   # get '/' => 'home#index'
   # get '/'だとHelperのPathが生成されないのでrootで定義する
-  resources  :articles do
-    resources  :comments, only: [:new, :create]
+  resources :articles do
+    resources :comments, only: [:new, :create]
+    
+    resource :like, only: [:create]
   end
   
-  resource  :profile, only: [:show, :edit, :update]
+  resource :profile, only: [:show, :edit, :update]
 end
