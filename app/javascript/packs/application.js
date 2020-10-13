@@ -4,7 +4,7 @@
 // that code so it'll be compiled.
 
 require("@rails/ujs").start()
-require("turbolinks").start()
+// require("turbolinks").start()
 require("@rails/activestorage").start()
 require("channels")
 
@@ -21,16 +21,19 @@ require("@rails/actiontext")
 
 import $ from 'jquery'
 import axios from 'axios'
+import { csrfToken } from 'rails-ujs'
+
+axios.defaults.headers.common['X-CSRF-Token'] = csrfToken()
 
 const handleHeartDisplay = (hasLiked) => {
   if (hasLiked) {
-    $('.avtive-heart').removeClass('hidden')
+    $('.active-heart').removeClass('hidden')
   } else {
     $('.inactive-heart').removeClass('hidden')
   }
 }
 
-document.addEventListener('turbolinks:load', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const dataset = $('#article-show').data()
   const articleId = dataset.articleId
   axios.get(`/articles/${articleId}/like`)
@@ -38,4 +41,28 @@ document.addEventListener('turbolinks:load', () => {
       const hasLiked = responce.data.hasLiked
       handleHeartDisplay(hasLiked)
     })
+
+  $('.inactive-heart').on('click', () => {
+    debugger
+    axios.post(`/articles/${articleId}/like`)
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((e) => {
+        window.alert('Error')
+        console.log(e)
+      })
+  })
+
+  $('.active-heart').on('click', () => {
+    debugger
+    axios.delete(`/articles/${articleId}/like`)
+      .then((response) => {
+        console.log(response)
+      })
+      .catch((e) => {
+        window.alert('Error')
+        console.log(e)
+      })
+  })
 })
