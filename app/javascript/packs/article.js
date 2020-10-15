@@ -1,12 +1,9 @@
 import $ from 'jquery'
-import axios from 'axios'
-import { csrfToken } from 'rails-ujs'
+import axios from 'modules/axios'
 import { 
   ListenInactiveHeartEvent,
   ListenActiveHeartEvent
 } from 'modules/handle_heart'
-
-axios.defaults.headers.common['X-CSRF-Token'] = csrfToken()
 
 const handleHeartDisplay = (hasLiked) => {
   if (hasLiked) {
@@ -68,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hasLiked = responce.data.hasLiked
     handleHeartDisplay(hasLiked)
   })
-  
+
   ListenInactiveHeartEvent(articleId)
   ListenActiveHeartEvent(articleId)
 })
