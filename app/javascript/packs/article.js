@@ -1,6 +1,10 @@
 import $ from 'jquery'
 import axios from 'axios'
 import { csrfToken } from 'rails-ujs'
+import { 
+  ListenInactiveHeartEvent,
+  ListenActiveHeartEvent
+} from 'modules/handle_heart'
 
 axios.defaults.headers.common['X-CSRF-Token'] = csrfToken()
 
@@ -29,16 +33,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const dataset = $('#article-show').data()
   const articleId = dataset.articleId
 
+  
   axios.get(`/articles/${articleId}/comments`)
-    .then((response) => {
-      const comments = response.data
-      comments.forEach((comment) => {
-        appendNewComment(comment)
-      })
+  .then((response) => {
+    const comments = response.data
+    comments.forEach((comment) => {
+      appendNewComment(comment)
     })
-
+  })
+  .catch((error) => {
+    window.alert('失敗')
+  })
+  
   handleCommentForm()
-
+  
   $('.add-comment-button').on('click', () => {
     const content = $('#comment_content').val()
     if (!content) {
@@ -47,45 +55,20 @@ document.addEventListener('DOMContentLoaded', () => {
       axios.post(`/articles/${articleId}/comments`, {
         comment: {content: content}
       })
-        .then((res) => {
-          const comment = res.data
-          appendNewComment(comment)
-          $('#comment_content').val('')
-        })
+      .then((res) => {
+        const comment = res.data
+        appendNewComment(comment)
+        $('#comment_content').val('')
+      })
     }
   })
-
-  axios.get(`/articles/${articleId}/like`)
-    .then((responce) => {
-      const hasLiked = responce.data.hasLiked
-      handleHeartDisplay(hasLiked)
-    })
   
-  $('.inactive-heart').on('click', () => {
-    axios.post(`/articles/${articleId}/like`)
-      .then((response) => {
-        if (response.data.status === 'ok' ) {
-          $('.active-heart').removeClass('hidden')
-          $('.inactive-heart').addClass('hidden')
-        }
-      })
-      .catch((e) => {
-        window.alert('Error')
-        console.log(e)
-      })
+  axios.get(`/articles/${articleId}/like`)
+  .then((responce) => {
+    const hasLiked = responce.data.hasLiked
+    handleHeartDisplay(hasLiked)
   })
-
-  $('.active-heart').on('click', () => {
-    axios.delete(`/articles/${articleId}/like`)
-      .then((response) => {
-        if (response.data.status === 'ok' ) {
-          $('.active-heart').addClass('hidden')
-          $('.inactive-heart').removeClass('hidden')
-        }
-      })
-      .catch((e) => {
-        window.alert('Error')
-        console.log(e)
-      })
-  })
+  
+  ListenInactiveHeartEvent(articleId)
+  ListenActiveHeartEvent(articleId)
 })
